@@ -1,0 +1,33 @@
+<html>
+<body>
+
+<div id="simpleplot"></div>
+<div id="simpleplot-dialog"></div>
+
+<script src="_lib/requirejs-v2.3.3/require.js"></script>
+<script>
+
+requirejs.config({
+	baseUrl: '',
+	paths: {
+		'jquery': '_lib/jquery-v3.2.1/jquery'
+	}
+});
+
+require(["simpleplot/widget"], function(SimplePlot) {
+	var widget = new SimplePlot("#simpleplot", { 
+		xLabel: "time of day",
+		yLabel: "programming skills",
+		data: [[1,5],[2,6],[3,7],[4,9]] 
+	});
+	widget.renderConfigDialog(
+		"#simpleplot-dialog", 
+		function() { 
+			console.log(widget.getConfig());
+		});
+})
+
+</script>
+
+</body>
+</html>

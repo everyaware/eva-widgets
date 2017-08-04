@@ -1,0 +1,35 @@
+<html>
+<body>
+
+<div id="helloworld"></div>
+<div id="helloconfig"></div>
+<div id="helloconfig-dialog"></div>
+
+<script src="_lib/requirejs-v2.3.3/require.js"></script>
+<script>
+
+requirejs.config({
+	baseUrl: '',
+	paths: {
+		'jquery': '_lib/jquery-v3.2.1/jquery'
+	}
+});
+
+require(["helloworld/widget"], function(HelloWorld) {
+	new HelloWorld("#helloworld");
+})
+
+require(["helloconfig/widget"], function(HelloConfig) {
+	var widget = new HelloConfig("#helloconfig", { name: "Dude" });
+	widget.renderConfigDialog(
+		"#helloconfig-dialog", 
+		function() { 
+			$("#helloconfig-dialog").hide();
+			console.log(widget.getConfig());
+		});
+})
+
+</script>
+
+</body>
+</html>
