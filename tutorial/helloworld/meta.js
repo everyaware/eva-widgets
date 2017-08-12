@@ -1,6 +1,6 @@
 define(function() {
 	return {
-		name: 'HellowWorld',
+		name: 'HelloWorld',
 		description: 'Prints a simple "Hello World!"',
 		imageUrl: undefined
 	};
