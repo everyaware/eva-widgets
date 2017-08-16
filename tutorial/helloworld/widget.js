@@ -6,14 +6,14 @@
  *	EveryAware Gears provides some libraries that can easily be used in a widget
  *	type.
  *	Examples:
- *	'jquery'			-	jQuery 3.2.1
- *	'jquery-ui'		- jQuery UI 1.12.1
- *	'd3'					- D3.js 4.8.0
- *	'handlebars'	-	Handlebars 4.0.5
- *	'lodash'			- Lodash 4.17.4
- *	'openlayers'	- OpenLayers 3.19.1
- *	'showdown'		- Showdown 1.7.2
- *	'sockjs'			- SockJS 1.1.1
+ *	'jquery'     - jQuery 3.2.1
+ *	'jquery-ui'  - jQuery UI 1.12.1
+ *	'd3'         - D3.js 4.8.0
+ *	'handlebars' - Handlebars 4.0.5
+ *	'lodash'     - Lodash 4.17.4
+ *	'openlayers' - OpenLayers 3.19.1
+ *	'showdown'   - Showdown 1.7.2
+ *	'sockjs'     - SockJS 1.1.1
  *
  *	Note: It is possible that these libraries are getting updated once in while.
  *
