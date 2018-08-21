@@ -10,12 +10,6 @@ class BarChart extends HTMLElement {
 
 		// this.evaApi = new EvaApi('https://api.everyaware.eu');
 		this.evaApi = new EvaApi('http://thorin:8082');
-		let now = new Date();
-		let lastWeek = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);
-		this.evaApi.fetchDataByTimespan('test', 'testSource', 'channelA', lastWeek, now, true)
-			.then(function (response) {
-				console.log(response);
-			});
 	}
 
 	static get observedAttributes() {
@@ -30,6 +24,22 @@ class BarChart extends HTMLElement {
 		return this.getAttribute('height');
 	}
 
+	get feed() {
+		return this.getAttribute('feed');
+	}
+
+	get source() {
+		return this.getAttribute('source');
+	}
+
+	get channel() {
+		return this.getAttribute('channel');
+	}
+
+	get component() {
+		return this.getAttribute('component');
+	}
+
 	get template() {
 		return `
 		<div id="container" style="width: ${this.width}; height: ${this.height}; display: inline-block;">
@@ -38,17 +48,31 @@ class BarChart extends HTMLElement {
 		`;
 	}
 
-	connectedCallback() {
-		console.log("connectedCallback yey!")
+	convertResponseToChartjs(response) {
+		let values = [];
+		let labels = [];
+		for(let packet of response['data']) {
+			values.push(packet['channels'][this.channel][this.component]);
+			labels.push(new Date(packet['timestamp']).toLocaleString());
+		}
 
+		return {
+			'values': values,
+			'labels': labels
+		};
+	}
+
+	initChart(initialData, labels, yLabel) {
+		
 		const ctx = this.shadowRoot.getElementById("myChart").getContext('2d');
+
 		this.chart = new Chart(ctx, {
 			type: 'line',
 			data: {
-				labels: ["Red", "Blue", "Yellow", "Green", "Purple", "Orange"],
+				labels: labels, //["Red", "Blue", "Yellow", "Green", "Purple", "Orange"],
 				datasets: [{
-					label: '# of Votes',
-					data: [12, 19, 3, 5, 2, 3]
+					label: yLabel,
+					data: initialData
 				}]
 			},
 			options: {
@@ -62,6 +86,23 @@ class BarChart extends HTMLElement {
 				}
 			}
 		});
+	}
+
+	connectedCallback() {
+		console.log("connectedCallback yey!")
+
+		let now = new Date();
+		let lastWeek = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);
+		this.evaApi.fetchDataByTimespan(this.feed, this.source, this.channel, lastWeek, now, true)
+			.then(function (response) {
+				console.log(response);
+
+				const data = this.convertResponseToChartjs(response);
+
+				this.initChart(data['values'], data['labels'], 'Value')
+				
+
+			}.bind(this));
 
 	}
 
