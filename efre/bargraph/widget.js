@@ -49,38 +49,36 @@ class BarChart extends HTMLElement {
 	}
 
 	convertResponseToChartjs(response) {
-		let values = [];
-		let labels = [];
+		let data = [];
 		for(let packet of response['data']) {
-			values.push(packet['channels'][this.channel][this.component]);
-			labels.push(new Date(packet['timestamp']).toLocaleString());
+			data.push({
+				x: new Date(packet['timestamp']),
+				y: packet['channels'][this.channel][this.component]
+			});
 		}
 
-		return {
-			'values': values,
-			'labels': labels
-		};
+		return data;
 	}
 
-	initChart(initialData, labels, yLabel) {
+	initChart(initialData) {
 		
 		const ctx = this.shadowRoot.getElementById("myChart").getContext('2d');
 
 		this.chart = new Chart(ctx, {
 			type: 'line',
-			data: {
-				labels: labels, //["Red", "Blue", "Yellow", "Green", "Purple", "Orange"],
-				datasets: [{
-					label: yLabel,
-					data: initialData
-				}]
-			},
+			data: initialData,
 			options: {
 				maintainAspectRatio: false,
 				scales: {
-					yAxes: [{
-						ticks: {
-							beginAtZero:true
+					// yAxes: [{
+					// 	ticks: {
+					// 		beginAtZero:true
+					// 	}
+					// }],
+					xAxes: [{
+						type: 'time',
+						time: {
+							unit: 'month'
 						}
 					}]
 				}
@@ -99,7 +97,8 @@ class BarChart extends HTMLElement {
 
 				const data = this.convertResponseToChartjs(response);
 
-				this.initChart(data['values'], data['labels'], 'Value')
+				console.log(data);
+				this.initChart(data);
 				
 
 			}.bind(this));
