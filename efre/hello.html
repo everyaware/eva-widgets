@@ -8,7 +8,21 @@
 </head>
 <body>
 
-	<bar-chart width="800px" height="400px" feed="test" source="testSource" channel="channelA" component="component2"></bar-chart>
+	<line-graph id="line-graph" width="800px" height="400px" feed="test" source="testSource" channel="channelA" component="component2" timestamp-begin="1534862566187" timestamp-end="1534257812892"></line-graph>
+
+	<script>
+		const graph = document.getElementById("line-graph");
+
+		function updateTimestamps() {
+			const end = (new Date()).getTime();
+			const begin = end - 7 * 24 * 60 * 60 * 1000;
+			graph.setAttribute("timestamp-begin", begin);
+			graph.setAttribute("timestamp-end", end);
+		}
+
+		updateTimestamps();
+		const timer = window.setInterval(updateTimestamps, 30000);
+	</script>
 
 </body>
 </html>
