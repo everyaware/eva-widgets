@@ -9,15 +9,16 @@ class LineGraph extends HTMLElement {
 		shadowRoot.innerHTML = this.template;
 
 		this.chart = new HistoryLineGraph(
-			shadowRoot.getElementById('line-graph')
+			shadowRoot.getElementById('line-graph'),
+			(begin, end) => {
+				this.timestampBegin = begin;
+				this.timestampEnd = end;
+
+				return this.loadData();
+			},
+			this.timestampBegin,
+			this.timestampEnd
 		);
-
-		this.chart.onZoomEnd((begin, end) => {
-			this.timestampBegin = begin;
-			this.timestampEnd = end;
-
-			return this.loadData();
-		});
 
 		// this.evaApi = new EvaApi('https://api.everyaware.eu');
 		this.evaApi = new EvaApi('http://thorin:8082');
@@ -104,28 +105,22 @@ class LineGraph extends HTMLElement {
 	}
 
 	connectedCallback() {
-		console.log('connectedCallback yey!');
-
-		this.loadData().then(data => {
-			this.chart.initDiagram(data);
-		});
+		this.chart.initDiagram();
 	}
 
 	attributeChangedCallback(name, oldValue, newValue) {
-		console.log('attributeChangedCallback yey!');
-
 		if (name == 'width' || name == 'height') {
 			const container = this.shadowRoot.getElementById('line-graph');
 			container.style[name] = newValue;
 
 			this.chart.redraw();
 		} else {
-			this.loadData().then(data => this.chart.redraw(data));
+			//this.loadData().then(data => this.chart.redraw(data));
 		}
 	}
 
-	loadData() {
-		return this.evaApi
+	async loadData() {
+		const response = await this.evaApi
 			.fetchDataByTimespan(
 				this.feed,
 				this.source,
@@ -133,12 +128,9 @@ class LineGraph extends HTMLElement {
 				this.timestampBegin,
 				this.timestampEnd,
 				true
-			)
-			.then(
-				function(response) {
-					return this.convertResponseToD3(response);
-				}.bind(this)
 			);
+		
+		return this.convertResponseToD3(response);
 	}
 
 	disconnectedCallback() {
