@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+</head>
+<body>
+
+<div id="unser-widget" style="width: 500px; height: 500px;"></div>
+<div id="unser-live-widget" style="width: 500px; height: 500px;"></div>
+
+<script src="http://thorin:8083/js/constants.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.5/require.min.js"></script>
+<script src="http://thorin:8083/js/require-config.js"></script>
+
+<script>
+	// API_ORIGIN = 'https://apps.everyaware.eu/gears';
+	API_ORIGIN ='http://thorin.informatik.uni-wuerzburg.de:8082';
+    requirejs([ORIGIN + '/js/app/widgets/historylinegraph/widget.js', ORIGIN + '/js/app/widgets/livelinegraph/widget.js'], function (HistoryLineGraph, LiveLineGraph) {
+        var unserWidget = new HistoryLineGraph('#unser-widget', {
+            line: {
+                feedId: 'test',
+                sourceId: 'testSource',
+                channel: 'channelA',
+                component: 'component2'
+            },
+            firstTS: (new Date()).getTime() - 100000,
+            lastTS: (new Date()).getTime(),
+            aggregation: false
+
+        });
+
+        var unserLiveWidget = new LiveLineGraph('#unser-live-widget', {
+            line: {
+                feedId: 'test',
+                sourceId: 'testSource',
+                channel: 'channelA',
+                component: 'component2'
+            },
+            timespan: 2
+        });
+    });
+</script>
+
+</body>
+</html>
