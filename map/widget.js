@@ -11,19 +11,17 @@ define(['jquery', 'app/config-view', 'css!./widget'], function ($, ConfigView) {
         // this.image = $('<img width="100%" height="100%">');
         this.container = $('<div class="image-widget-container"></div>');
         this.imageContainer = $('<div class="image-widget-image-container"></div>');
-        this.sliderContainer = $('<div class="image-widget-slider-container"></div>');
         this.title = $('<div class="image-widget-title"></div>');
         this.slider = $('<input class="image-widget-slider" type="range" min="0" value="0">');
-        this.sliderContainer.append(this.title)
-                            .append(this.slider);
         this.container.append(this.imageContainer)
-                      .append(this.sliderContainer);
+                      .append(this.title)
+                      .append(this.slider);
         $(this.selector).append(this.container);
         
         if (config) {
             this.config = config;
             this.slider.attr('max', this.config.urls.length - 1);
-            this.slider.val(this.config.sliderPosition);
+            this.slider.attr('value', this.config.sliderPosition);
             this.title.text(this.config.titles[this.config.sliderPosition]);
             this.redraw();
         } else {
@@ -33,7 +31,6 @@ define(['jquery', 'app/config-view', 'css!./widget'], function ($, ConfigView) {
                 sliderPosition: 0
             };
             this.slider.attr('max', 0);
-            this.slider.hide();
         }
 
         this.slider.on('input change', function (event) {
@@ -75,19 +72,16 @@ define(['jquery', 'app/config-view', 'css!./widget'], function ($, ConfigView) {
             function (newConfigStructure) {
 
                 newConfigStructure.forEach(function (configEntry) {
-                    this.config[configEntry.id] = configEntry.value.split('\n').filter(function (elem) {
-                        return elem !== '';
-                    });
+                    this.config[configEntry.id] = configEntry.value.split('\n');
                 }.bind(this));
 
                 this.slider.attr('max', this.config.urls.length - 1);
-                this.config.sliderPosition = 0;
+            
+                this.redraw();
 
-                this.redraw(); 
                 callback();
             }.bind(this));
-
-        };
+	};
 
 	/*
 	 * These are some required life cycle functions. 
@@ -97,15 +91,6 @@ define(['jquery', 'app/config-view', 'css!./widget'], function ($, ConfigView) {
 	Image.prototype.redraw = function () {
         var title = this.config.titles[this.config.sliderPosition];
         this.title.html(title ? title : '<br>');
-
-        this.slider.val(this.config.sliderPosition);             	
-
-        if (this.config.urls.length <= 1) {
-            this.slider.hide();
-        } else {
-            this.slider.show();
-        }
-
         this.imageContainer.css('background-image', 'url("' + this.config.urls[this.config.sliderPosition] + '")');
 	};
 	Image.prototype.destroy = function () {
