@@ -19,6 +19,8 @@ requirejs.config({
         handlebars: 'handlebars/dist/handlebars.amd.min',
         jquery: 'jquery/dist/jquery.min',
         'jquery.ui.touch-punch': 'jquery-ui-touch-punch/jquery.ui.touch-punch.min',
+        leaflet: 'leaflet/dist/leaflet',
+        'leaflet-css': 'leaflet/dist/leaflet',
         lodash: 'lodash/lodash.min',
         'oauth2-client': '@zalando/oauth2-client-js/dist/oauth2-client',
         'css': 'require-css/css.min',

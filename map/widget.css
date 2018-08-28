@@ -1,27 +1,4 @@
-.image-widget-container {
+.map-widget-container {
     width: 100%;
     height: 100%;
-}
-
-.image-widget-image-container {
-    width: 100%;
-    height: 90%;
-    background-size: contain;
-    background-repeat: no-repeat;
-    background-position: center center;
-}
-
-.image-widget-title {
-    text-align: center;
-}
-
-.image-widget-slider {
-    width: 90% !important;
-    height: 25px;
-    margin: 0 auto;
-}
-
-.image-widget-title {
-    font-size: 150%;
-    font-weight: bold;
 }

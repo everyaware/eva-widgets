@@ -1,12 +1,14 @@
 define(['jquery', 'app/config-view', 'css!./widget'], function ($, ConfigView) {
 
 	/**
-	 * This widget is for editing and displaying markdown.
+	 * This widget is for displaying images.
 	 */
 	function Image(selector, config) {
 
 		// save selector for later reference
         this.selector = selector;
+
+        this.separator = ' ; ';
 
         // this.image = $('<img width="100%" height="100%">');
         this.container = $('<div class="image-widget-container"></div>');
@@ -22,22 +24,23 @@ define(['jquery', 'app/config-view', 'css!./widget'], function ($, ConfigView) {
         
         if (config) {
             this.config = config;
-            this.slider.attr('max', this.config.urls.length - 1);
+            this.slider.attr('max', this.config.images.length - 1);
             this.slider.val(this.config.sliderPosition);
-            this.title.text(this.config.titles[this.config.sliderPosition]);
-            this.redraw();
+            this.title.text(this.config.images[this.config.sliderPosition]['title']);
         } else {
             this.config = {
-                urls: [],
-                titles: [],
+                images: [],
                 sliderPosition: 0
             };
             this.slider.attr('max', 0);
             this.slider.hide();
         }
 
+        this.redraw();
+
         this.slider.on('input change', function (event) {
             this.config.sliderPosition = this.slider.val();
+            $(this).trigger('state:change');
             this.redraw();
         }.bind(this));
 	}
@@ -53,16 +56,12 @@ define(['jquery', 'app/config-view', 'css!./widget'], function ($, ConfigView) {
 	Image.prototype.renderConfigDialog = function (selector, callback) {
         var configStructure = [
             {
-                id: 'urls',
-                name: 'URLs',
+                id: 'images',
+                name: 'Images (title' + this.separator + 'url)',
                 type: 'textarea',
-                value: this.config.urls.join('\n')
-            },
-            {
-                id: 'titles',
-                name: 'Titles',
-                type: 'textarea',
-                value: this.config.titles.join('\n')
+                value: this.config.images.map(function (image) {
+                    return image.title + this.separator + image.url;
+                }.bind(this)).join('\n')
             }
 
             // https://i.redd.it/6o5wtc9qcli11.jpg
@@ -77,10 +76,16 @@ define(['jquery', 'app/config-view', 'css!./widget'], function ($, ConfigView) {
                 newConfigStructure.forEach(function (configEntry) {
                     this.config[configEntry.id] = configEntry.value.split('\n').filter(function (elem) {
                         return elem !== '';
-                    });
+                    }).map(function (line) {
+                        var elements = line.split(this.separator);
+                        return {
+                            title: elements[0].trim(),
+                            url: elements[1].trim()
+                        };
+                    }.bind(this));
                 }.bind(this));
 
-                this.slider.attr('max', this.config.urls.length - 1);
+                this.slider.attr('max', this.config.images.length - 1);
                 this.config.sliderPosition = 0;
 
                 this.redraw(); 
@@ -95,18 +100,23 @@ define(['jquery', 'app/config-view', 'css!./widget'], function ($, ConfigView) {
 	 * Other tutorials go into more detail.
 	 */
 	Image.prototype.redraw = function () {
-        var title = this.config.titles[this.config.sliderPosition];
+
+        if (this.config.images.length === 0) {
+            return;
+        }
+
+        var title = this.config.images[this.config.sliderPosition]['title'];
         this.title.html(title ? title : '<br>');
 
         this.slider.val(this.config.sliderPosition);             	
 
-        if (this.config.urls.length <= 1) {
+        if (this.config.images.length <= 1) {
             this.slider.hide();
         } else {
             this.slider.show();
         }
 
-        this.imageContainer.css('background-image', 'url("' + this.config.urls[this.config.sliderPosition] + '")');
+        this.imageContainer.css('background-image', 'url("' + this.config.images[this.config.sliderPosition]['url'] + '")');
 	};
 	Image.prototype.destroy = function () {
 	};
