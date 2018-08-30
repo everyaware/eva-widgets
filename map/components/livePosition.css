@@ -1,0 +1,20 @@
+.map-marker {
+    width: auto !important;
+    height: auto !important;
+    margin-top: calc(-100% - 6px) !important;
+    margin-left: -50% !important;
+    padding: 2px 4px;
+    border-radius: 2px;
+    background: white;
+}
+
+.map-marker::before {
+    content: "";
+    position: absolute;
+    top: 100%;
+    left: 50%;
+    transform: translateX(-50%);
+    border-width: 6px 6px 0 6px;
+    border-style: solid;
+    border-color: white transparent transparent transparent;
+}

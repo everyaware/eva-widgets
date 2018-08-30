@@ -1,4 +1,4 @@
-define(['jquery', 'leaflet', 'css!./widget', 'css!leaflet-css'],
+define(['jquery', 'leaflet', 'css!leaflet-css'],
     function ($, L) {
 
 
@@ -39,19 +39,25 @@ define(['jquery', 'leaflet', 'css!./widget', 'css!leaflet-css'],
         this.configNamespace = 'wms';
         this.configWmsTileServers = 'wmsTileServers';
 
+        this.separator = ' ; ';
+
         this.mapWidget = mapWidget;
 
-        this.mapWidget.config[this.configNamespace] = {
-            wmsTileServers: [{
+        if (!this.mapWidget.config[this.configNamespace]) {
+
+            this.mapWidget.config[this.configNamespace] = {};
+            this.mapWidget.config[this.configNamespace][this.configWmsTileServers] = [{
                 url: 'https://maps.dwd.de/geoserver/ows?',
                 opacity: 0.7,
                 layers: ['dwd:GefuehlteTemp']
-            }]
-        };
+            }];
+
+        }
+
         
 	}
     
-    WmsMapDecorator.prototype.initMap = function() {
+    WmsMapComponent.prototype.initMap = function() {
 
         for (var tileServerIndex in this.mapWidget.config[this.configNamespace][this.configWmsTileServers]) {
             var layer = L.tileLayer.wms(this.mapWidget.config[this.configNamespace][this.configWmsTileServers][tileServerIndex].url, {
@@ -63,20 +69,20 @@ define(['jquery', 'leaflet', 'css!./widget', 'css!leaflet-css'],
         }
     }
 
-    WmsMapDecorator.prototype.getConfigStructure = function() {
+    WmsMapComponent.prototype.getConfigStructure = function() {
         return [
             {
                 id: this.configNamespace + ':' + this.configWmsTileServers,
                 name: 'Tile servers (wms base url' + this.mapWidget.separator + 'opacity' + this.mapWidget.separator + 'layers)',
                 type: 'textarea',
-                value: this.mapWidget.config.wmsTileServers.map(function (tileServer) {
+                value: this.mapWidget.config[this.configNamespace][this.configWmsTileServers].map(function (tileServer) {
                     return tileServer.url + this.mapWidget.separator + tileServer.opacity + this.mapWidget.separator + tileServer.layers.join(this.mapWidget.separator);
                 }.bind(this)).join('\n')
             }
         ];
     }
 
-    WmsMapDecorator.prototype.parseConfigStructure = function(newConfigStructure) {
+    WmsMapComponent.prototype.parseConfigStructure = function(newConfigStructure) {
 
         newConfigStructure.forEach(function (configEntry) {
             if (configEntry.id.startsWith(this.configNamespace)) {
@@ -102,12 +108,12 @@ define(['jquery', 'leaflet', 'css!./widget', 'css!leaflet-css'],
 
     }
 
-	WmsMapDecorator.prototype.redraw = function () {
+	WmsMapComponent.prototype.redraw = function () {
 	};
-	WmsMapDecorator.prototype.destroy = function () {
+	WmsMapComponent.prototype.destroy = function () {
 	};
 
 	// return our widget
-	return WmsMapDecorator;
+	return WmsMapComponent;
 
 });
