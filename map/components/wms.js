@@ -58,15 +58,53 @@ define(['jquery', 'leaflet', 'css!leaflet-css'],
 	}
     
     WmsMapComponent.prototype.initMap = function() {
+        if (this.wmsControl) {
+            this.wmsControl.remove(this.mapWidget.map);
+        }
+
+        if (this.legendLayers) {
+            for (var legendLayer of this.legendLayers) {
+                legendLayer.remove(this.mapWidget.map);
+            }
+        }
+
+        if (this.mapWidget.config[this.configNamespace][this.configWmsTileServers].length === 0) {
+            return;
+        }
+
+        var wmsMaps = {
+        };
+
+        this.legendLayers = [];
 
         for (var tileServerIndex in this.mapWidget.config[this.configNamespace][this.configWmsTileServers]) {
+
+            var wmsLayers = this.mapWidget.config[this.configNamespace][this.configWmsTileServers][tileServerIndex].layers;
+
             var layer = L.tileLayer.wms(this.mapWidget.config[this.configNamespace][this.configWmsTileServers][tileServerIndex].url, {
-                layers: this.mapWidget.config[this.configNamespace][this.configWmsTileServers][tileServerIndex].layers.join(','),
+                layers: wmsLayers.join(','),
                 opacity: this.mapWidget.config[this.configNamespace][this.configWmsTileServers][tileServerIndex].opacity
             });
             console.log(layer.getLegendGraphic());
             layer.addTo(this.mapWidget.map);
+
+            wmsMaps[wmsLayers] = layer;
+
+            for (var wmsLayer of wmsLayers) {
+                
+                var legend = L.control({position: 'bottomright'}); 
+                legend.onAdd = function (map) {        
+                    var div = L.DomUtil.create('div', 'info legend');
+                    div.innerHTML = '<img src="' + layer.getLegendGraphic()[wmsLayer] +  '">';     
+                    return div;
+                }.bind(this);      
+                legend.addTo(this.mapWidget.map);
+    
+                this.legendLayers.push(legend);
+            }
         }
+
+        this.wmsControl = L.control.layers(null, wmsMaps, {position: 'bottomleft'}).addTo(this.mapWidget.map);
     }
 
     WmsMapComponent.prototype.getConfigStructure = function() {

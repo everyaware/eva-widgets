@@ -34,6 +34,7 @@ requirejs.config({
         'jquery.fancytree-glyph': '../js/lib/fancytree/modules/jquery.fancytree.glyph',
         'jquery.fancytree.ui-deps': '../js/lib/fancytree/modules/jquery.fancytree.ui-deps',
         'jquery-ui-css': 'jquery-ui/themes/base/all'
+        // 'app/eva-api': '../js-es6/app/eva-api'
     },
     shim: {
         'bootstrap': {
