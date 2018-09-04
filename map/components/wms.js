@@ -85,7 +85,6 @@ define(['jquery', 'leaflet', 'css!leaflet-css'],
                 layers: wmsLayers.join(','),
                 opacity: this.mapWidget.config[this.configNamespace][this.configWmsTileServers][tileServerIndex].opacity
             });
-            console.log(layer.getLegendGraphic());
             layer.addTo(this.mapWidget.map);
 
             wmsMaps[wmsLayers] = layer;
