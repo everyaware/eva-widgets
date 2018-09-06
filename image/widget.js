@@ -21,19 +21,22 @@ define(['jquery', 'app/config-view', 'css!./widget'], function ($, ConfigView) {
         this.container.append(this.imageContainer)
                       .append(this.sliderContainer);
         $(this.selector).append(this.container);
-        
+
+        this.slider.attr('max', 0);
+        this.slider.hide();
+
         if (config) {
             this.config = config;
             this.slider.attr('max', this.config.images.length - 1);
             this.slider.val(this.config.sliderPosition);
-            this.title.text(this.config.images[this.config.sliderPosition]['title']);
+            if (this.config.images[this.config.sliderPosition]) {
+                this.title.text(this.config.images[this.config.sliderPosition]['title']);
+			}
         } else {
             this.config = {
                 images: [],
                 sliderPosition: 0
             };
-            this.slider.attr('max', 0);
-            this.slider.hide();
         }
 
         this.redraw();

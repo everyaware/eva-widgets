@@ -18,19 +18,12 @@ define(['jquery', 'leaflet', 'app/config-view', './components/wms.js', './compon
         
         if (config) {
             this.config = config;
-
-
-            // this.redraw();
         } else {
             this.config = {};
-            this.config[this.configNamespace] = {
-                center: L.latLng(50, 9.97),
-                zoom: 8,
-                baseTileServer: {
-                    url: 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
-                    attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-                }
-            };
+            this.config[this.configNamespace] = { center: L.latLng(50, 9.97), zoom: 8, baseTileServer: {
+                // url: 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
+                url: 'https://{s}.tile.openstreetmap.de/tiles/osmde/{z}/{x}/{y}.png',
+                attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors' } };
 
         }
         // Initialize components
@@ -52,6 +45,12 @@ define(['jquery', 'leaflet', 'app/config-view', './components/wms.js', './compon
             $(this).trigger('state:change');
             this.redraw();
         }.bind(this));
+
+        $(this.container).closest(".grid-stack-item").on('resizestop', function(event, elem) {
+			window.setTimeout(function() {
+                this.map.invalidateSize();
+            }.bind(this), 500);
+		}.bind(this));
 	}
 
 	Map.prototype.getConfig = function () {
